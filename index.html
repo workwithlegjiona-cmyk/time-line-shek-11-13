@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="sq">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shek. 11–13: Arbëria, Bizanti, Perëndimi dhe Bota</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--bg:#0f1420;--panel:#171e2e;--panel2:#1f2840;--text:#e9edf6;--muted:#9aa7c2;--line:#2a3452;
+--arberi:#e5484d;--bizant:#a78bfa;--perendim:#4da3ff;--bota:#2ec4a0;--accent:#ffd166}
+@media (prefers-color-scheme:light){:root{--bg:#f3f5fa;--panel:#fff;--panel2:#eaeef7;--text:#17203a;--muted:#5a6785;--line:#d5dbea}}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column}
+header{padding:12px 20px;background:var(--panel);border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+header h1{font-size:1.1rem;margin:0;flex:1 1 280px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:5px 12px;border-radius:999px;cursor:pointer;font-size:.85rem;display:flex;gap:6px;align-items:center}
+.chip i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.chip.off{opacity:.4}
+button.pres{background:var(--accent);color:#1b1b1b;border:0;padding:7px 14px;border-radius:8px;font-weight:700;cursor:pointer}
+#tl{position:relative;overflow-x:auto;overflow-y:hidden;background:var(--panel);border-bottom:1px solid var(--line);height:222px;flex:none;scrollbar-width:thin}
+#tlin{position:relative;height:222px}
+.band{position:absolute;top:0;bottom:0}
+.band.odd{background:rgba(127,140,180,.08)}
+.bandlab{position:absolute;bottom:6px;left:10px;font-weight:800;font-size:.8rem;color:var(--muted);letter-spacing:.08em}
+.axis{position:absolute;left:0;right:0;top:170px;height:4px;background:var(--muted);opacity:.75;border-radius:2px}
+.tick{position:absolute;top:174px;width:1px;height:7px;background:var(--muted)}
+.tick.big{height:13px;width:2px}
+.tly{position:absolute;top:187px;transform:translateX(-50%);font-size:.68rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.tly.big{font-weight:700;color:var(--text);font-size:.78rem}
+.pin{position:absolute;width:150px;transform:translateX(-50%);cursor:pointer;z-index:1}
+.pin .lab{position:absolute;top:0;left:0;right:0;font-size:.68rem;line-height:20px;height:20px;padding:0 7px;border-radius:5px;background:var(--panel2);border:1px solid var(--c);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pin .lab b{color:var(--c);margin-right:4px}
+.pin .stem{position:absolute;left:50%;top:20px;bottom:0;width:2px;margin-left:-1px;background:var(--c);opacity:.7}
+.pin .dot{position:absolute;left:50%;bottom:-6px;width:13px;height:13px;margin-left:-6.5px;border-radius:50%;background:var(--c);border:2px solid var(--panel)}
+.pin:hover{z-index:4}.pin:hover .lab{background:var(--c);color:#0b0f1a;width:max-content;max-width:340px;left:50%;right:auto;transform:translateX(-50%)}.pin:hover .lab b{color:#0b0f1a}
+.pin.active{z-index:5}
+.pin.active .lab{background:var(--c);color:#0b0f1a;width:max-content;max-width:340px;left:50%;right:auto;transform:translateX(-50%);font-weight:700}
+.pin.active .lab b{color:#0b0f1a}
+.pin.active .dot{transform:scale(1.5)}
+main{flex:1;display:grid;grid-template-columns:300px 1fr 1fr;min-height:0}
+#list{overflow:auto;border-right:1px solid var(--line);background:var(--panel)}
+.item{padding:10px 14px;border-bottom:1px solid var(--line);cursor:pointer;border-left:4px solid transparent}
+.item:hover{background:var(--panel2)}
+.item.active{background:var(--panel2);border-left-color:var(--c)}
+.item b{display:block;font-size:.8rem;color:var(--c)}
+.item span{font-size:.92rem;line-height:1.3;display:block}
+#card{overflow:auto;padding:20px}
+#card .meta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.badge{font-size:.78rem;padding:3px 10px;border-radius:999px;color:#0b0f1a;font-weight:700}
+.year{font-size:2.4rem;font-weight:800;line-height:1}
+h2{margin:.4em 0 .3em;font-size:1.5rem;line-height:1.25}
+#img{width:100%;max-height:260px;object-fit:cover;border-radius:12px;background:var(--panel2);display:none;margin:10px 0}
+#img.ok{display:block}
+.src{font-size:.72rem;color:var(--muted);margin:-4px 0 8px}
+p.desc{font-size:1.05rem}
+.place{color:var(--muted);margin:6px 0 14px}
+.video{margin-top:14px}
+.thumb{display:block;position:relative;border-radius:12px;overflow:hidden;text-decoration:none;color:#fff}
+.thumb img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block}
+.thumb span{position:absolute;left:12px;bottom:12px;background:rgba(0,0,0,.75);padding:7px 14px;border-radius:8px;font-weight:700}
+.video iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:12px}
+a.btn{display:inline-block;padding:8px 14px;border-radius:8px;background:var(--panel2);color:var(--text);text-decoration:none;border:1px solid var(--line);margin:4px 6px 0 0;font-size:.9rem}
+.nav{display:flex;gap:8px;margin-top:18px}
+.nav button{flex:1;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--text);cursor:pointer;font-size:1rem}
+#map{min-height:300px}
+.leaflet-container{background:#1b2236}
+body.present header .chips,body.present #list{display:none}
+body.present main{grid-template-columns:1fr 1fr}
+body.present #card{font-size:1.15em}
+body.present .year{font-size:3.4rem}
+@media (max-width:1000px){
+ main{grid-template-columns:1fr;grid-template-rows:200px auto 320px;overflow:auto}
+ #list{border-right:0;border-bottom:1px solid var(--line)}
+ body.present main{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>Shek. 11–13: Arbëria, Bizanti, Perëndimi dhe Bota</h1>
+  <div class="chips" id="chips"></div>
+  <button class="pres" id="presBtn">▶ Prezanto</button>
+</header>
+<div id="tl"></div>
+<main>
+  <div id="list"></div>
+  <div id="card"></div>
+  <div id="map"></div>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+const G={"Arbëri":"var(--arberi)","Bizant":"var(--bizant)","Perëndim":"var(--perendim)","Botë":"var(--bota)"};
+const GC={"Arbëri":"#e5484d","Bizant":"#a78bfa","Perëndim":"#4da3ff","Botë":"#2ec4a0"};
+// yt: ID i videos në YouTube (shtoje kur ta verifikosh); q: kërkimi në YouTube; w: faqet e Wikipedia-s për foto
+const E=[
+{y:1018,g:"Arbëri",t:"Bizanti pushton Bullgarinë, Arbëria nën sundim bizantin",d:"Perandori Bazili II mposht Bullgarinë e Parë dhe shtrin sundimin mbi Ballkanin Perëndimor. Territoret arbërore, me Dyrrahun (Durrësin) si qendër, bëhen pjesë e plotë e sistemit të temave bizantine.",p:"Ohër / Durrës",c:[41.1231,20.8016],w:["Basil_II","Byzantine_Empire"],q:"Basil II Bulgar Slayer documentary",yt:"lIuNd9KulZM"},
+{y:1040,g:"Botë",t:"Shtypshkronja me lëvizje në Kinë (Bi Sheng)",d:"Në kohën e dinastisë Song, Bi Sheng shpik shtypjen me shkronja prej balte të lëvizshme, shekuj para Gutenbergut. Është një hap i madh në përhapjen e dijes.",p:"Kaifeng, Kinë",c:[34.7973,114.3075],w:["Bi_Sheng","Movable_type"],q:"Bi Sheng movable type Song dynasty",yt:"5Hl-lcDAgNs"},
+{y:1040,g:"Botë",t:"Beteja e Dandanakanit: Selxhukët krijojnë perandorinë",d:"Turqit selxhukë mundin Gaznevidët dhe themelojnë një shtet të fuqishëm në Persi e Azinë Qendrore. Nga ky bërthamë do të fillojë shtytja drejt Anadollit bizantin.",p:"Dandanakan, Turkmenistan",c:[36.9,62.0],w:["Battle_of_Dandanaqan","Seljuk_Empire"],q:"Seljuk Empire history Tughril Beg",yt:"P79ECnISamo"},
+{y:1054,g:"Bizant",t:"Skizma e Madhe: ndarja e Kishës",d:"Kisha Katolike e Romës dhe ajo Ortodokse e Kostandinopojës ndahen zyrtarisht. Ndarja ndikon në Arbëri: veriu mbetet më shumë i lidhur me Romën, jugu me Bizantin ortodoks.",p:"Kostandinopojë (Stamboll)",c:[41.0082,28.9784],w:["East–West_Schism","Hagia_Sophia"],q:"Great Schism 1054 explained",yt:"a6rWf0k8d78"},
+{y:1066,g:"Perëndim",t:"Pushtimi norman i Anglisë",d:"Uilliami Pushtuesi mund mbretin Harold në Betejën e Hastingsit dhe bëhet mbret i Anglisë. Kjo ndryshon gjuhën, aristokracinë dhe strukturën politike të vendit.",p:"Hastings, Angli",c:[50.9095,0.4879],w:["Battle_of_Hastings","Bayeux_Tapestry"],q:"Battle of Hastings 1066 documentary",yt:"oLy1LskT6Y8"},
+{y:1071,g:"Bizant",t:"Beteja e Manzikertit",d:"Selxhukët e udhëhequr nga Alp Arslani mundin dhe zënë rob perandorin Roman IV Diogjen. Bizanti humb kontrollin mbi Anadollin dhe fillon kriza e shekullit të 11-të.",p:"Manzikert, Turqi lindore",c:[39.1431,42.5392],w:["Battle_of_Manzikert","Alp_Arslan"],q:"Battle of Manzikert 1071",yt:"rn85RHrShrI"},
+{y:1077,g:"Perëndim",t:"Canossa: perandori përulet para Papës",d:"Në mosmarrëveshjen e investiturës, perandori Henri IV pret tri ditë në dëborë para kështjellës së Canossës për të marrë falje nga Papa Grigor VII. Është simbol i luftës mes pushtetit laik dhe atij kishtar.",p:"Canossa, Itali",c:[44.5833,10.45],w:["Walk_to_Canossa","Henry_IV,_Holy_Roman_Emperor"],q:"Walk to Canossa Henry IV Gregory VII",yt:"rvY5MErtDAY"},
+{y:1079,g:"Arbëri",t:"Arbanitët përmenden në burimet bizantine",d:"Historiani Mihal Ataliati përmend 'Arbanitët' (Arbanitai), një nga përmendjet më të hershme të emrit të shqiptarëve në burime bizantine. Ata paraqiten si popull me ushtri e kryengritje në Ballkanin Perëndimor.",p:"Arbëria (rajoni i Durrësit)",c:[41.3231,19.4414],w:["Michael_Attaleiates","Albanians"],q:"Arbanitai Attaliates first mention Albanians",yt:"q8FlfyleeQM"},
+{y:1081,g:"Arbëri",t:"Beteja e Durrësit: Normanët kundër Bizantit",d:"Robert Guiscard i Italisë së Jugut sulmon Durrësin. Perandori Aleksi I Komneni mposhtet pranë qytetit, megjithëse më vonë kthen kontrollin. Durrësi është porta lindore e Rrugës Egnatia.",p:"Durrës",c:[41.3231,19.4414],w:["Battle_of_Dyrrhachium_(1081)","Robert_Guiscard"],q:"Battle of Dyrrhachium 1081",yt:"FFya9iLzvsM"},
+{y:1085,g:"Botë",t:"Alfonsi VI merr Toledon (Rikonkuista)",d:"Mbreti i Leonit dhe Kastiljes pushton Toledon, një nga qytetet kryesore të Spanjës myslimane. Është një hap i madh në rikthimin e Gadishullit Iberik nën sundim të krishterë.",p:"Toledo, Spanjë",c:[39.8628,-4.0273],w:["Alfonso_VI_of_León_and_Castile","Toledo,_Spain"],q:"Reconquista Toledo 1085 Alfonso VI",yt:"lKsgOb8oe-4"},
+{y:1088,g:"Perëndim",t:"Themelimi i Universitetit të Bolonjës",d:"Konsiderohet universiteti më i vjetër i botës perëndimore në vazhdim. Studentët organizohen vetë për të studiuar së drejtës romake dhe kanunore.",p:"Bolonjë, Itali",c:[44.4949,11.3426],w:["University_of_Bologna"],q:"University of Bologna history oldest university",yt:"KEPqwXgvcCw"},
+{y:1095,g:"Perëndim",t:"Papa Urbani II shpall Kryqëzatën e Parë",d:"Në Këshillin e Clermontit, Papa Urbani II fton kalorësinë e Evropës të marrë Jeruzalemin. Mijëra njerëz nisen drejt Lindjes, shpesh duke kaluar nëpër Ballkan e rrugën Egnatia.",p:"Clermont, Francë",c:[45.7772,3.087],w:["Council_of_Clermont","Pope_Urban_II"],q:"First Crusade explained Clermont 1095",yt:"KaqQ9eYB2KE"},
+{y:1099,g:"Botë",t:"Kryqtarët pushtojnë Jeruzalemin",d:"Pas një rrethimi të gjatë, kryqtarët marrin Jeruzalemin dhe krijojnë Mbretërinë Latine të Jeruzalemit dhe shtete të tjera kryqtare në Levant.",p:"Jeruzalem",c:[31.7683,35.2137],w:["Siege_of_Jerusalem_(1099)","Kingdom_of_Jerusalem"],q:"Siege of Jerusalem 1099 First Crusade",yt:"nUCYmHwDM3E"},
+{y:1107,g:"Arbëri",t:"Bohemundi sulmon Durrësin; Traktati i Devollit (1107–1108)",d:"Bohemundi i Antiokisë nis një fushatë të re kundër Bizantit përmes Durrësit. Pas dështimit, firmos traktatin e Devollit me Aleksin I, që e bën vasal të perandorit.",p:"Devoll / Durrës",c:[40.7167,20.7167],w:["Treaty_of_Devol","Bohemond_I_of_Antioch"],q:"Bohemond Alexios Treaty of Devol 1108",yt:"b9dyV7XUfCA"},
+{y:1113,g:"Botë",t:"Nis ndërtimi i Angkor Wat",d:"Mbreti Suryavarman II i Perandorisë Khmere ndërton tempullin më të madh fetar në botë, i përkushtuar Vishnusë. Është kulmi i artit dhe arkitekturës khmere.",p:"Angkor, Kamboxhia",c:[13.4125,103.867],w:["Angkor_Wat"],q:"Angkor Wat history Khmer Empire Suryavarman II",yt:"x7GQC66Jtqs"},
+{y:1127,g:"Botë",t:"Song i Jugut: dinastia lëviz në jug",d:"Pasi Jurchenët pushtojnë veriun, dinastia Song transferohet në jug dhe bën kryeqytet Hangzhou. Kina jugore do të njohë një lulëzim të madh tregtar dhe teknologjik.",p:"Hangzhou, Kinë",c:[30.2741,120.1551],w:["Southern_Song","Hangzhou"],q:"Southern Song dynasty history Jin Jurchen",yt:"8bz1upxfCEY"},
+{y:1163,g:"Perëndim",t:"Fillon ndërtimi i Notre-Dame të Parisit",d:"Peshkopi Maurice de Sully fillon katedralen gotike në Paris. Stili gotik, me harqe të ngritura dhe vitraje, përhapet në gjithë Evropën.",p:"Paris, Francë",c:[48.853,2.3499],w:["Notre-Dame_de_Paris"],q:"Notre-Dame de Paris construction history Gothic",yt:"CnNB732aFwI"},
+{y:1170,g:"Perëndim",t:"Vrasja e Thomas Becket në Canterbury",d:"Kryepeshkopi i Canterburyt vritet në katedrale nga kalorës të mbretit Henri II. Ngjarja tronditi Evropën dhe forcoi pozitën e Kishës përballë mbretërve.",p:"Canterbury, Angli",c:[51.2802,1.0789],w:["Thomas_Becket","Canterbury_Cathedral"],q:"Thomas Becket murder Henry II Canterbury",yt:"RCuiy71dRj8"},
+{y:1176,g:"Bizant",t:"Beteja e Myriokefalonit",d:"Perandori Manuel I Komneni pëson një disfatë të rëndë nga Selxhukët e Rumit. Shuhet shpresa e Bizantit për të rimarrë Anadollin qendror.",p:"Myriokefalon, Turqi",c:[37.8,30.8],w:["Battle_of_Myriokephalon","Manuel_I_Komnenos"],q:"Battle of Myriokephalon 1176",yt:"sbtG5Hw_s44"},
+{y:1185,g:"Bizant",t:"Normanët plaçkitin Selanikun; vdes Andronik I",d:"Normanët e Sicilisë pushtojnë Selanikun, qytetin e dytë të Perandorisë. Në Kostandinopojë, Andronik I Komneni përmbyset dhe vritet, duke i dhënë fund dinastisë Komnene.",p:"Selanik",c:[40.6401,22.9444],w:["Siege_of_Thessalonica_(1185)","Andronikos_I_Komnenos","Thessaloniki"],q:"Fall of Thessalonica 1185 Normans Byzantine",yt:"9hMlb8XfGpM"},
+{y:1187,g:"Botë",t:"Beteja e Hattinit: Saladini merr Jeruzalemin",d:"Sulltan Saladini shkatërron ushtrinë kryqtare te Hattini dhe rimerr Jeruzalemin. Kjo shkakton Kryqëzatën e Tretë të Rikardit Zemërluan dhe Filipit II.",p:"Hattin, Izrael",c:[32.8,35.45],w:["Battle_of_Hattin","Saladin"],q:"Battle of Hattin 1187 Saladin",yt:"ndXuRoJd6hQ"},
+{y:1190,g:"Arbëri",t:"Principata e Arbrit (Arbanonit) me Progonin",d:"Në Krujë, pas largimit të Bizantit, Progoni krijon Principatën e Arbrit, shtetin e parë shqiptar të njohur në histori. Pas tij vijnë Gjini dhe Dhimitër Progoni.",p:"Krujë",c:[41.5097,19.7933],w:["Principality_of_Arbanon","Krujë_Castle"],q:"Principata e Arbrit Progoni 1190 historia",yt:"5VJXHb9W22c"},
+{y:1192,g:"Botë",t:"Shogunati Kamakura në Japoni",d:"Minamoto no Yoritomo merr titullin shogun dhe ndërton qeverinë ushtarake në Kamakura. Fillon dominimi i samurajve në Japoni për shekuj me radhë.",p:"Kamakura, Japoni",c:[35.3192,139.5467],w:["Kamakura_shogunate","Minamoto_no_Yoritomo"],q:"Kamakura shogunate Minamoto no Yoritomo history",yt:"dql4zmbw_gM"},
+{y:1204,g:"Bizant",t:"Kryqëzata IV plaçkit Kostandinopojën",d:"Kryqtarët e shtyrë nga Venecia i bien Kostandinopojës dhe e plaçkitin. Perandoria Bizantine shpërbëhet në shtete të vogla dhe themelohet Perandoria Latine.",p:"Kostandinopojë (Stamboll)",c:[41.0082,28.9784],w:["Sack_of_Constantinople_(1204)","Fourth_Crusade"],q:"Fourth Crusade Sack of Constantinople 1204",yt:"IpHbbq0O7Wo"},
+{y:1205,g:"Arbëri",t:"Despotati i Epirit dhe Venecia në brigjet arbërore (1204–1205)",d:"Mihal I Engjëll Komneni themelon Despotatin e Epirit, që përfshin pjesë të Arbërisë së jugut. Venecia merr Durrësin dhe për një kohë kontrollon brigjet adriatike.",p:"Arta, Epir",c:[39.1608,20.9855],w:["Despotate_of_Epirus","Michael_I_Komnenos_Doukas"],q:"Despotate of Epirus history Michael Komnenos Doukas",yt:"xYKu2uvp_4o"},
+{y:1206,g:"Botë",t:"Sulltanati i Delhit",d:"Pas pushtimeve në Indinë veriore, Qutbuddin Aibak themelon Sulltanatin e Delhit. Fillon një periudhë kur sundojnë dinasti myslimane në nënkontinent.",p:"Delhi, Indi",c:[28.6139,77.209],w:["Delhi_Sultanate","Qutb_Minar"],q:"Delhi Sultanate history Qutb ud-Din Aibak",yt:"MALDXJ-VA80"},
+{y:1206,g:"Botë",t:"Gjenghis Khani bashkon Mongolët",d:"Temuxhini shpallet Gjenghis Khan në kurultaj. Nga ky çast Mongolët nisin pushtimet që do të ndërtojnë perandorinë më të madhe tokësore të historisë.",p:"Mongoli",c:[47.9,106.9],w:["Genghis_Khan"],q:"Genghis Khan rise Mongol Empire 1206 documentary",yt:"wUVvTqvjUaM"},
+{y:1209,g:"Perëndim",t:"Fillon Kryqëzata Albigeze",d:"Papa Inocenti III thërret një kryqëzatë kundër katarëve në Francën e jugut. Është ngjarje e rëndësishme në historinë e Inkuizicionit mesjetar.",p:"Béziers, Francë",c:[43.3442,3.2158],w:["Albigensian_Crusade","Cathars"],q:"Albigensian Crusade Cathars history",yt:"3Ph9rffLMSA"},
+{y:1212,g:"Botë",t:"Las Navas de Tolosa",d:"Koalicioni i mbretërve të krishterë mund Almohadët në Spanjë. Kjo fitore shpejton rënien e pushtetit mysliman në Iberi.",p:"Las Navas de Tolosa, Spanjë",c:[38.3,-3.6],w:["Battle_of_Las_Navas_de_Tolosa"],q:"Battle of Las Navas de Tolosa 1212",yt:"Yl8iWejuZmM"},
+{y:1215,g:"Perëndim",t:"Magna Carta dhe Këshilli i Katërt i Lateranit",d:"Mbreti Gjon i Anglisë firmos Magna Cartën dhe kufizon pushtetin e tij. Në të njëjtin vit, Këshilli i Katërt i Lateranit riorganizon Kishën Perëndimore.",p:"Runnymede, Angli / Romë",c:[51.4442,-0.5645],w:["Magna_Carta","Fourth_Council_of_the_Lateran"],q:"Magna Carta 1215 explained",yt:"7xo4tUMdAMw"},
+{y:1219,g:"Botë",t:"Mongolët shkatërrojnë Khorezmin (1219–1221)",d:"Gjenghis Khani pushton Samarkandin, Bukharën dhe Urgenxhin pas vrasjes së tregtarëve mongolë. Është një nga fushatat më shkatërruese të mesjetës.",p:"Samarkand, Uzbekistan",c:[39.6542,66.9597],w:["Mongol_conquest_of_Khwarazmia","Samarkand"],q:"Mongol invasion of Khwarazmian Empire Genghis",yt:"WjS1FbHLIxM"},
+{y:1235,g:"Botë",t:"Beteja e Kirinës: lind Perandoria e Malit",d:"Sundiata Keita mund Sumanguru dhe themelon Perandorinë e Malit në Afrikën Perëndimore. Mali do të bëhet i famshëm për arin dhe për mbretin Mansa Musa.",p:"Kirina, Mali",c:[12.9,-8.1],w:["Battle_of_Kirina","Sundiata_Keita","Mali_Empire"],q:"Sundiata Keita Mali Empire Battle of Kirina",yt:"HnAdxN_f1D8"},
+{y:1258,g:"Botë",t:"Mongolët shkatërrojnë Bagdadin",d:"Hulagu Khani pushton Bagdadin dhe i jep fund Kalifatit Abasid. Biblioteka 'Shtëpia e Diturisë' dhe qyteti pësojnë shkatërrime të mëdha.",p:"Bagdad, Irak",c:[33.3152,44.3661],w:["Siege_of_Baghdad_(1258)","Hulagu_Khan"],q:"Siege of Baghdad 1258 Mongols Hulagu",yt:"-3MPE2BWmBo"},
+{y:1260,g:"Botë",t:"Beteja e Ain Jalutit",d:"Mamlukët e Egjiptit mundin për herë të parë Mongolët në fushëbetejë. Kjo ndalon përparimin mongol drejt Afrikës veriore.",p:"Ain Jalut, Palestinë",c:[32.55,35.35],w:["Battle_of_Ain_Jalut"],q:"Battle of Ain Jalut 1260 Mamluks Mongols",yt:"K59YdccsRu4"},
+{y:1261,g:"Bizant",t:"Mihal VIII Paleologu rimerr Kostandinopojën",d:"Perandoria e Nikesë rimerr Kostandinopojën nga latinët dhe Bizanti ringjallet me dinastinë Paleologe. Perandoria mbetet e dobët dhe e rrethuar.",p:"Kostandinopojë (Stamboll)",c:[41.0082,28.9784],w:["Michael_VIII_Palaiologos","Empire_of_Nicaea"],q:"Michael VIII Palaiologos reconquest Constantinople 1261",yt:"hINMA8LRFX4"},
+{y:1271,g:"Botë",t:"Marco Polo në Kinë; Mongolët themelojnë dinastinë Yuan (1271–1279)",d:"Kubilai Khani përfundon pushtimin e Kinës së Jugut (1279) dhe themelon dinastinë Yuan. Marco Polo udhëton dhe takon oborrin e tij, duke shkruar për Lindjen.",p:"Khanbaliq (Pekin), Kinë",c:[39.9042,116.4074],w:["Marco_Polo","Yuan_dynasty"],q:"Kublai Khan Yuan dynasty Marco Polo documentary",yt:"jxQPV0gfg5k"},
+{y:1272,g:"Arbëri",t:"Karli I i Anzhuit krijon Mbretërinë e Arbërisë",d:"Karli I i Anzhuit pushton Durrësin dhe shpall 'Regnum Albaniae'. Është shteti i parë me emrin Arbëri nën një mbret të huaj dhe fillon sundimi anzhuin për një shekull.",p:"Durrës",c:[41.3231,19.4414],w:["Kingdom_of_Albania_(medieval)","Charles_I_of_Anjou"],q:"Regnum Albaniae 1272 Charles of Anjou Durres",yt:"spkHyx0Za6I"}
+];
+const $=s=>document.querySelector(s);
+const active=new Set(Object.keys(G));
+let cur=0, markers=[], imgCache={};
+const map=L.map('map',{worldCopyJump:true}).setView([42,20],4);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18,attribution:'© OpenStreetMap'}).addTo(map);
+E.forEach((e,i)=>{
+  const m=L.circleMarker(e.c,{radius:8,color:'#fff',weight:2,fillColor:GC[e.g],fillOpacity:.95}).addTo(map);
+  m.bindTooltip(e.y+' – '+e.t); m.on('click',()=>select(i)); markers[i]=m;
+});
+function visible(){return E.map((e,i)=>i).filter(i=>active.has(E[i].g))}
+function buildChips(){
+  $('#chips').innerHTML=Object.keys(G).map(k=>`<button class="chip ${active.has(k)?'':'off'}" data-k="${k}"><i style="background:${GC[k]}"></i>${k}</button>`).join('');
+  document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{const k=b.dataset.k;active.has(k)?active.delete(k):active.add(k);buildChips();buildList();buildTL();tlActive(cur);markers.forEach((m,i)=>{active.has(E[i].g)?m.addTo(map):map.removeLayer(m)});if(!active.has(E[cur].g)){const v=visible();if(v.length)select(v[0])}});
+}
+function buildList(){
+  $('#list').innerHTML=visible().map(i=>`<div class="item ${i===cur?'active':''}" style="--c:${GC[E[i].g]}" data-i="${i}"><b>${E[i].y} · ${E[i].g}</b><span>${E[i].t}</span></div>`).join('');
+  document.querySelectorAll('.item').forEach(el=>el.onclick=()=>select(+el.dataset.i));
+}
+const X0=1005,PPY=16,PAD=60;
+const tx=y=>(y-X0)*PPY+PAD;
+function buildTL(){
+  let h=`<div id="tlin" style="width:${tx(1290)+PAD}px">`;
+  [[1000,1100,'SHEK. XI'],[1100,1200,'SHEK. XII'],[1200,1300,'SHEK. XIII']].forEach((b,k)=>{
+    const l=Math.max(0,tx(b[0])-PAD*0), r=tx(Math.min(b[1],1290));
+    h+=`<div class="band ${k%2?'':'odd'}" style="left:${b[0]===1000?0:tx(b[0])}px;width:${(b[0]===1000?tx(1100):r-tx(b[0]))+(b[0]===1000?0:0)}px"><span class="bandlab">${b[2]}</span></div>`;
+  });
+  h+='<div class="axis"></div>';
+  for(let y=1010;y<=1285;y+=5){
+    const big=y%50===0, ten=y%10===0;
+    if(ten||big)h+=`<div class="tick ${big?'big':''}" style="left:${tx(y)}px"></div>`;
+    if(big||(ten&&y%10===0))h+=`<div class="tly ${big?'big':''}" style="left:${tx(y)}px">${y}</div>`;
+  }
+  const last=[-1e9,-1e9,-1e9,-1e9,-1e9,-1e9];
+  const order=visible();
+  order.forEach(i=>{
+    const e=E[i],x=tx(e.y)+ (e.y===E[i].y? (i%2? 0:0):0);
+    let L=0;while(L<5&&last[L]>x-158)L++;
+    last[L]=x;
+    const stem=12+L*26, top=170-stem-20;
+    h+=`<div class="pin" data-i="${i}" style="left:${x}px;top:${top}px;height:${stem+20}px;--c:${GC[e.g]}"><div class="lab"><b>${e.y}</b>${e.t}</div><div class="stem"></div><div class="dot"></div></div>`;
+  });
+  $('#tl').innerHTML=h+'</div>';
+  document.querySelectorAll('.pin').forEach(p=>p.onclick=()=>select(+p.dataset.i));
+}
+function tlActive(i){
+  document.querySelectorAll('.pin').forEach(p=>p.classList.toggle('active',+p.dataset.i===i));
+  const p=document.querySelector('.pin.active');
+  if(p){const tl=$('#tl');tl.scrollTo({left:p.offsetLeft-tl.clientWidth/2,behavior:'smooth'})}
+}
+async function loadImg(e){
+  if(imgCache[e.t]!==undefined)return imgCache[e.t];
+  for(const w of e.w){
+    try{const r=await fetch('https://en.wikipedia.org/api/rest_v1/page/summary/'+encodeURIComponent(w));
+      if(!r.ok)continue;const j=await r.json();
+      const src=(j.originalimage&&j.originalimage.source&&j.thumbnail&&j.thumbnail.source.replace(/\/\d+px-/,'/960px-'))||(j.thumbnail&&j.thumbnail.source);
+      if(src){return imgCache[e.t]={src,page:j.content_urls&&j.content_urls.desktop.page,title:j.title}}}catch(_){}
+  }
+  return imgCache[e.t]=null;
+}
+async function select(i){
+  cur=i;const e=E[i];
+  buildList();tlActive(i);
+  const act=document.querySelector('.item.active');if(act)act.scrollIntoView({block:'nearest'});
+  const web=location.protocol.startsWith('http');
+  const yt=!e.yt?'':web
+    ?`<div class="video"><iframe src="https://www.youtube.com/embed/${e.yt}?rel=0" allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" title="Video"></iframe></div>`
+    :`<div class="video"><a class="thumb" target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=${e.yt}"><img src="https://i.ytimg.com/vi/${e.yt}/hqdefault.jpg" alt="Video në YouTube"><span>▶ Shiko videon në YouTube</span></a></div>`;
+  $('#card').innerHTML=`<div class="meta"><span class="year">${e.y}</span><span class="badge" style="background:${GC[e.g]}">${e.g}</span></div>
+   <h2>${e.t}</h2>
+   <img id="img" alt=""><div class="src" id="src"></div>
+   <p class="desc">${e.d}</p>
+   <div class="place">📍 ${e.p}</div>
+   ${yt}
+   <div><a class="btn" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=${encodeURIComponent(e.q)}">▶ Kërko video në YouTube</a>
+   <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${e.c[0]},${e.c[1]}">🗺 Hap në Google Maps</a></div>
+   <div class="nav"><button id="prev">← Para</button><button id="next">Pas →</button></div>`;
+  $('#prev').onclick=()=>step(-1);$('#next').onclick=()=>step(1);
+  map.flyTo(e.c,Math.max(map.getZoom(),5),{duration:.8});
+  markers.forEach((m,k)=>m.setStyle({radius:k===i?13:8,weight:k===i?4:2}));markers[i].bringToFront();
+  const im=await loadImg(e);if(cur!==i)return;
+  if(im){const el=$('#img');el.src=im.src;el.onload=()=>el.classList.add('ok');$('#src').innerHTML=`Foto: Wikipedia – <a style="color:var(--muted)" target="_blank" rel="noopener" href="${im.page}">${im.title}</a>`}
+}
+function step(d){const v=visible();let k=v.indexOf(cur);k=(k+d+v.length)%v.length;select(v[k])}
+document.addEventListener('keydown',ev=>{
+  if(ev.key==='ArrowRight'||ev.key==='PageDown')step(1);
+  if(ev.key==='ArrowLeft'||ev.key==='PageUp')step(-1);
+  if(ev.key==='Escape'&&document.body.classList.contains('present'))togglePres();
+});
+function togglePres(){
+  const on=document.body.classList.toggle('present');
+  $('#presBtn').textContent=on?'■ Dil':'▶ Prezanto';
+  if(on&&document.documentElement.requestFullscreen)document.documentElement.requestFullscreen().catch(()=>{});
+  if(!on&&document.fullscreenElement)document.exitFullscreen();
+  setTimeout(()=>map.invalidateSize(),300);
+}
+$('#presBtn').onclick=togglePres;
+buildChips();buildList();buildTL();select(0);
+setTimeout(()=>map.invalidateSize(),300);
+</script>
+</body>
+</html>
